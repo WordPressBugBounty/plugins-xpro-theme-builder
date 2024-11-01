@@ -1,3 +1,7 @@
+= V 1.2.8.2 - 01 November 2024 =
+
+- Tweak: Update Compatibility with Elementor
+
 = V 1.2.8.1 - 06 June 2024 =
 
 - Tweak: Update Plugin Name

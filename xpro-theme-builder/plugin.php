@@ -235,8 +235,10 @@ class Xpro_Theme_Builder_Main {
 		}
 
 		if ( class_exists( '\ElementorPro\Plugin' ) ) {
-			$elementor_pro = Plugin::instance();
-			$elementor_pro->enqueue_styles();
+			if (method_exists(Plugin::instance(), 'enqueue_styles')) {
+				$elementor_pro = Plugin::instance();
+				$elementor_pro->enqueue_styles();
+			}
 		}
 
 		if ( self::$elementor_instance && xpro_theme_builder_header_enabled() ) {
