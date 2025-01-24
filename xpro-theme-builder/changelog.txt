@@ -1,3 +1,8 @@
+= V 1.2.8.3 - 25 January 2025 =
+
+- Fix: Resolved vulnerability private post content via shortcode.
+
+
 = V 1.2.8.2 - 01 November 2024 =
 
 - Tweak: Update Compatibility with Elementor

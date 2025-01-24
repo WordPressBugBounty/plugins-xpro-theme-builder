@@ -333,6 +333,12 @@ class Xpro_Theme_Builder_Main {
 			return '';
 		}
 
+		// if post type private and user can not read the post
+			$post = get_post( $id );
+			if ( ! $post || $post->post_status === 'private' && ! current_user_can( 'read_post', $id ) ) {
+			wp_die( __( 'You are not allowed to access this post.', 'xpro-elementor-addons' ), 403 );
+		}
+
 		if ( self::$elementor_instance ) {
 			if ( class_exists( '\Elementor\Core\Files\CSS\Post' ) ) {
 				$css_file = new Post( $id );
