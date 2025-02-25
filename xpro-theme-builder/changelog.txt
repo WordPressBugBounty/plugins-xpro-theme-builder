@@ -1,3 +1,8 @@
+= V 1.2.8.4 - 25 February 2025 =
+
+- Fixed: Updated compatibility with Elementor and WordPress.
+
+
 = V 1.2.8.3 - 25 January 2025 =
 
 - Fix: Resolved vulnerability private post content via shortcode.
