@@ -333,10 +333,29 @@ class Xpro_Theme_Builder_Main {
 			return '';
 		}
 
-		// if post type private and user can not read the post
-			$post = get_post( $id );
-			if ( ! $post || $post->post_status === 'private' && ! current_user_can( 'read_post', $id ) ) {
-			wp_die( __( 'You are not allowed to access this post.', 'xpro-elementor-addons' ), 403 );
+		$post = get_post( $id );
+		if ( ! $post ) {
+			wp_die( __( 'Post not found.', 'xpro-elementor-addons' ), 404 );
+		}
+		    if ( ! empty( $post->post_password ) && post_password_required( $post ) ) {
+			wp_die( __( 'This post is password protected.', 'xpro-elementor-addons' ), 403 );
+		}
+		if ( $post->post_status === 'trash' ) {
+			wp_die( __( 'You are not allowed to access this post (Trashed Post).', 'xpro-elementor-addons' ), 403 );
+		}
+		$post_status = $post->post_status;
+		$status_labels = [
+			'private' => 'Private Post',
+			'draft' => 'Draft Post',
+			'pending' => 'Pending Post',
+			'trash' => 'Trashed Post',
+		];
+		if (
+			in_array( $post_status, array_keys( $status_labels ), true ) &&
+			! current_user_can( 'read_post', $id )
+		) {
+			$label = $status_labels[ $post_status ];
+			wp_die( sprintf( __( 'You are not allowed to access this post(%s).', 'xpro-elementor-addons' ), $label ), 403 );
 		}
 
 		if ( self::$elementor_instance ) {
