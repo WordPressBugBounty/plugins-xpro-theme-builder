@@ -1,6 +1,11 @@
+= V 1.2.9 - 09 July 2025 =
+
+- Fix: Resolved deprecated code warnings to ensure compatibility with the latest WordPress and PHP versions.
+
+
 = V 1.2.8.5 - 05 May 2025 =
 
-Fix: Resolved shortcode vulnerability issue in theme builder.
+- Fix: Resolved shortcode vulnerability issue in theme builder.
 
 
 = V 1.2.8.4 - 25 February 2025 =

@@ -87,7 +87,7 @@ function xpro_theme_builder_render_header() {
 
 	?>
 	<header class="xpro-theme-builder-header<?php echo esc_attr( $class ); ?>" itemscope="itemscope" itemtype="https://schema.org/WPHeader">
-		<p class="main-title xpro-hidden" itemprop="headline"><a href="<?php echo esc_url( bloginfo( 'url' ) ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home"><?php esc_html( bloginfo( 'name' ) ); ?></a></p>
+		<p class="main-title xpro-hidden" itemprop="headline"><a href="<?php echo esc_url( get_bloginfo( 'url' ) ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home"><?php esc_html( bloginfo( 'name' ) ); ?></a></p>
 		<nav class="xpro-theme-builder-header-nav">
 			<?php Xpro_Theme_Builder_Main::get_header_content(); ?>
 		</nav>
