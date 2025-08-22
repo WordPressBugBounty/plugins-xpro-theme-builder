@@ -1,3 +1,8 @@
+= V 1.2.10 - 22 August 2025 =
+
+- Fix: Resolved issue related to Access Control.
+
+
 = V 1.2.9 - 09 July 2025 =
 
 - Fix: Resolved deprecated code warnings to ensure compatibility with the latest WordPress and PHP versions.

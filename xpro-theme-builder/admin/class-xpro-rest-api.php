@@ -529,9 +529,49 @@ final class Xpro_Theme_Builder_Rest_Api {
 	 *
 	 * @return boolean
 	 */
-	public static function check_permission() {
-		return current_user_can( 'edit_posts' );
-	}
+	// public static function check_permission() {
+	// 	return current_user_can( 'edit_posts' );
+	// }
+
+	/**
+	 * Checks permission.
+	 *
+	 * @param WP_REST_Request $request The request.
+	 *
+	 * @return boolean|WP_Error
+	 */
+	public static function check_permission( $request ) {
+        $route = $request->get_route();
+		
+        if ( strpos( $route, 'create-post' ) !== false ) {
+            return current_user_can( 'publish_posts' );
+        }
+
+        if ( strpos( $route, 'update-post' ) !== false || strpos( $route, 'delete-post' ) !== false ) {
+            $post_id = (int) $request['id'];
+            $post    = get_post( $post_id );
+            if ( ! $post ) {
+                return new WP_Error( 'rest_post_invalid', __( 'Invalid post.' ), array( 'status' => 404 ) );
+            }
+
+            $allowed_types = array( 'post', 'page' );
+            if ( ! in_array( $post->post_type, $allowed_types, true ) ) {
+                return new WP_Error( 'rest_forbidden', __( 'Post type not allowed.' ), array( 'status' => 403 ) );
+            }
+
+            if ( $post->post_author != get_current_user_id() && ! current_user_can( 'edit_others_posts' ) ) {
+                return new WP_Error( 'rest_forbidden', __( 'Dilshad is testing not deleted or edit' ), array( 'status' => 403 ) );
+            }
+
+            return true;
+        }
+
+        if ( strpos( $route, 'update-settings' ) !== false ) {
+            return current_user_can( 'manage_options' );
+        }
+
+        return new WP_Error( 'rest_forbidden', __( 'Invalid permission.' ), array( 'status' => 403 ) );
+    }
 }
 
 Xpro_Theme_Builder_Rest_Api::init();
