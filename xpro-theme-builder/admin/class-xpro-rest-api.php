@@ -541,37 +541,38 @@ final class Xpro_Theme_Builder_Rest_Api {
 	 * @return boolean|WP_Error
 	 */
 	public static function check_permission( $request ) {
-        $route = $request->get_route();
-		
-        if ( strpos( $route, 'create-post' ) !== false ) {
-            return current_user_can( 'publish_posts' );
-        }
+			$route = $request->get_route();
 
-        if ( strpos( $route, 'update-post' ) !== false || strpos( $route, 'delete-post' ) !== false ) {
-            $post_id = (int) $request['id'];
-            $post    = get_post( $post_id );
-            if ( ! $post ) {
-                return new WP_Error( 'rest_post_invalid', __( 'Invalid post.' ), array( 'status' => 404 ) );
-            }
+			// Allow reads for anyone who can at least read
+			if ( strpos( $route, 'get-' ) !== false ) {
+				return current_user_can( 'read' );
+			}
 
-            $allowed_types = array( 'post', 'page' );
-            if ( ! in_array( $post->post_type, $allowed_types, true ) ) {
-                return new WP_Error( 'rest_forbidden', __( 'Post type not allowed.' ), array( 'status' => 403 ) );
-            }
+			// Settings changes are more sensitive
+			if ( strpos( $route, 'update-settings' ) !== false ) {
+				return current_user_can( 'manage_options' );
+			}
 
-            if ( $post->post_author != get_current_user_id() && ! current_user_can( 'edit_others_posts' ) ) {
-                return new WP_Error( 'rest_forbidden', __( 'Dilshad is testing not deleted or edit' ), array( 'status' => 403 ) );
-            }
+			// Creating posts
+			if ( strpos( $route, 'create-post' ) !== false ) {
+				return current_user_can( 'edit_posts' );
+			}
 
-            return true;
-        }
+			// Updating posts
+			if ( strpos( $route, 'update-post' ) !== false ) {
+				$post_id = $request->get_param( 'id' );
+				return $post_id ? current_user_can( 'edit_post', $post_id ) : false;
+			}
 
-        if ( strpos( $route, 'update-settings' ) !== false ) {
-            return current_user_can( 'manage_options' );
-        }
+			// Deleting posts
+			if ( strpos( $route, 'delete-post' ) !== false ) {
+				$post_id = $request->get_param( 'id' );
+				return $post_id ? current_user_can( 'delete_post', $post_id ) : false;
+			}
 
-        return new WP_Error( 'rest_forbidden', __( 'Invalid permission.' ), array( 'status' => 403 ) );
-    }
+			// Default fallback
+			return current_user_can( 'edit_posts' );
+	}
 }
 
 Xpro_Theme_Builder_Rest_Api::init();

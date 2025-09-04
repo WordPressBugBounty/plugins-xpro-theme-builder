@@ -1,3 +1,8 @@
+= V 1.2.11 - 04 September 2025 =
+
+- Resolved: Issue with non-functional sidebar icon in Xpro Theme Builder.
+
+
 = V 1.2.10 - 22 August 2025 =
 
 - Fix: Resolved issue related to Access Control.
