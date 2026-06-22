@@ -1,11 +1,11 @@
 === Xpro Theme Builder For Elementor - FREE ===
 Plugin Name: Xpro Theme Builder For Elementor - FREE
-Version: 1.2.11
-Contributors: Xpro
+Version: 1.2.12
+Contributors: @dilshad101, Xpro
 Tags: elementor, theme builder, header footer builder, sticky header, free theme builder
 Requires at least: 5.0
-Tested up to: 6.8.2
-Stable tag: trunk
+Tested up to: 7.0
+Stable tag: 1.2.12
 Requires PHP: 7.0
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -288,6 +288,12 @@ Xpro theme builder for elementor is a 100% FREE plugin to use for your website. 
 
 
 == Changelog ==
+
+= V 1.2.12 - 23 June 2026 =
+
+- Resolved: General-related issues and improvements.
+- Resolved: Compatibility with the latest WordPress and Elementor versions.
+
 
 = V 1.2.11 - 04 September 2025 =
 

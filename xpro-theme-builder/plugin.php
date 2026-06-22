@@ -335,13 +335,13 @@ class Xpro_Theme_Builder_Main {
 
 		$post = get_post( $id );
 		if ( ! $post ) {
-			wp_die( __( 'Post not found.', 'xpro-elementor-addons' ), 404 );
+			wp_die( esc_html__( 'Post not found.', 'xpro-theme-builder' ), 404 );
 		}
 		    if ( ! empty( $post->post_password ) && post_password_required( $post ) ) {
-			wp_die( __( 'This post is password protected.', 'xpro-elementor-addons' ), 403 );
+			wp_die( esc_html__( 'This post is password protected.', 'xpro-theme-builder' ), 403 );
 		}
 		if ( $post->post_status === 'trash' ) {
-			wp_die( __( 'You are not allowed to access this post (Trashed Post).', 'xpro-elementor-addons' ), 403 );
+			wp_die( esc_html__( 'You are not allowed to access this post (Trashed Post).', 'xpro-theme-builder' ), 403 );
 		}
 		$post_status = $post->post_status;
 		$status_labels = [
@@ -355,7 +355,8 @@ class Xpro_Theme_Builder_Main {
 			! current_user_can( 'read_post', $id )
 		) {
 			$label = $status_labels[ $post_status ];
-			wp_die( sprintf( __( 'You are not allowed to access this post(%s).', 'xpro-elementor-addons' ), $label ), 403 );
+			/* translators: %s: Post label. */
+			wp_die( sprintf(esc_html__( 'You are not allowed to access this post(%s).', 'xpro-theme-builder' ), esc_html( $label ) ), 403 );
 		}
 
 		if ( self::$elementor_instance ) {

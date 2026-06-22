@@ -1,3 +1,9 @@
+= V 1.2.12 - 23 June 2026 =
+
+- Resolved: General-related issues and improvements.
+- Resolved: Compatibility with the latest WordPress and Elementor versions.
+
+
 = V 1.2.11 - 04 September 2025 =
 
 - Resolved: Issue with non-functional sidebar icon in Xpro Theme Builder.

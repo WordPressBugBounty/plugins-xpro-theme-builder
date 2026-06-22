@@ -124,7 +124,13 @@ class Xpro_Theme_Builder_Settings extends Elementor\Core\Base\Document {
 
 		// Posts
 		foreach ( $post_types as $slug => $title ) {
-			$latest_post = get_posts( 'post_type=' . $slug . '&numberposts=1' );
+			// $latest_post = get_posts( 'post_type=' . $slug . '&numberposts=1' );
+			$latest_post = get_posts(
+				array(
+					'post_type'   => $slug,
+					'numberposts' => 1,
+				)
+			);
 
 			$this->add_control(
 				'preview_single_' . $slug,
@@ -147,7 +153,14 @@ class Xpro_Theme_Builder_Settings extends Elementor\Core\Base\Document {
 				$title = 'Post ' . $title;
 			}
 
-			$terms = get_terms( $slug, 'orderby=date&hide_empty=0&number=1' );
+			// $terms = get_terms( $slug, 'orderby=date&hide_empty=0&number=1' );
+			$terms = get_terms(
+				array(
+					'taxonomy'   => $slug,
+					'hide_empty' => false,
+					'number'     => 1,
+				)
+			);
 
 			$this->add_control(
 				'preview_archive_' . $slug,
