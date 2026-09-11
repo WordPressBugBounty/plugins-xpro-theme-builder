@@ -1,4 +1,6 @@
 <?php
+
+defined( 'ABSPATH' ) || die();
 /**
  * Astra_Theme_Compatibility setup
  *

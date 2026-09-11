@@ -1,3 +1,10 @@
+= V 1.2.13 - 11 September 2026 =
+
+-Fixed: Prevented direct file access issues.
+-Updated: Improved and updated the readme.txt content.
+-Fixed: Resolved security and compatibility issues.
+
+
 = V 1.2.12 - 23 June 2026 =
 
 - Resolved: General-related issues and improvements.
