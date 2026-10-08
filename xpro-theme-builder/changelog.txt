@@ -1,3 +1,14 @@
+= V 1.2.15 - 08 October 2026 =
+
+-Fixed: Resolved minor issues and improved overall stability.
+
+
+= V 1.2.14 - 07 October 2026 =
+
+- New: Added a Sticky Sidebar as a Structure Template alongside Header and Footer, with support for both Default Sidebar (WordPress) and Custom Sidebar options.
+- Fixed: Resolved general errors and added protection against direct file access.
+
+
 = V 1.2.13 - 11 September 2026 =
 
 -Fixed: Prevented direct file access issues.
