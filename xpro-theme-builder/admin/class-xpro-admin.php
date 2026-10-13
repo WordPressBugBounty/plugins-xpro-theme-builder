@@ -118,7 +118,15 @@ class Xpro_Theme_Builder_Admin {
 	 */
 	public function column_content( $column, $post_id ) {
 
+	
+
 		if ( 'xpro_theme_builder_display_rules' === $column ) {
+
+
+		    if ( 'type_sidebar' === get_post_meta( $post_id, 'xpro_theme_builder_template_type', true ) ) {
+				esc_html_e( 'Assigned from Xpro Sidebar settings', 'xpro-theme-builder' );
+				return;
+			}
 
 			$locations = get_post_meta( $post_id, 'xpro_theme_builder_target_include_locations', true );
 			if ( ! empty( $locations ) ) {
@@ -322,6 +330,8 @@ class Xpro_Theme_Builder_Admin {
 		$values        = get_post_custom( $post->ID );
 		$template_type = isset( $values['xpro_theme_builder_template_type'] ) ? esc_attr( $values['xpro_theme_builder_template_type'][0] ) : '';
 		$sticky        = isset( $values['xpro_theme_builder_sticky'] ) ? esc_attr( $values['xpro_theme_builder_sticky'][0] ) : '';
+		$sidebar_setting  = xpro_theme_builder_get_sidebar_setting();
+		$sidebar_mode     = $sidebar_setting['mode'];
 
 		// We'll use this nonce field later on when saving.
 		wp_nonce_field( 'xpro_theme_builder_meta_nounce', 'xpro_theme_builder_meta_nounce' );
@@ -338,6 +348,7 @@ class Xpro_Theme_Builder_Admin {
 						<optgroup label="Structure">
 							<option value="type_header" <?php selected( $template_type, 'type_header' ); ?>><?php esc_html_e( 'Header', 'xpro-theme-builder' ); ?></option>
 							<option value="type_footer" <?php selected( $template_type, 'type_footer' ); ?>><?php esc_html_e( 'Footer', 'xpro-theme-builder' ); ?></option>
+							<option value="type_sidebar" <?php selected( $template_type, 'type_sidebar' ); ?>> <?php esc_html_e( 'Sidebar', 'xpro-theme-builder' ); ?> </option>
 						</optgroup>
 						<optgroup label="Content">
 							<option value="type_archive" <?php selected( $template_type, 'type_archive' ); ?>><?php esc_html_e( 'Archive', 'xpro-theme-builder' ); ?></option>
@@ -357,6 +368,50 @@ class Xpro_Theme_Builder_Admin {
 						<option value="" <?php selected( $sticky, '' ); ?>><?php esc_html_e( 'Disable', 'xpro-theme-builder' ); ?></option>
 						<option value="enable" <?php selected( $sticky, 'enable' ); ?>><?php esc_html_e( 'Enable', 'xpro-theme-builder' ); ?></option>
 					</select>
+				</td>
+			</tr>
+			<tr class="xpro-theme-builder-options-row xpro-theme-builder-sidebar-settings">
+				<td class="xpro-theme-builder-options-row-heading">
+					<label>
+						<?php esc_html_e( 'Sidebar Settings', 'xpro-theme-builder' ); ?>
+					</label>
+
+					<i
+						class="xpro-theme-builder-options-row-heading-help dashicons dashicons-editor-help"
+						title="<?php esc_attr_e( 'Choose whether this template uses the default WordPress sidebar or a custom Elementor sidebar.', 'xpro-theme-builder' ); ?>"
+					></i>
+				</td>
+
+				<td class="xpro-theme-builder-options-row-content">
+					<label class="xpro-theme-builder-sidebar-choice">
+						<input
+							type="radio"
+							name="xpro_theme_builder_sidebar_mode"
+							value="default"
+							<?php checked( $sidebar_mode, 'default' ); ?>
+						>
+
+						<?php esc_html_e( 'Default Sidebar (WordPress)', 'xpro-theme-builder' ); ?>
+					</label>
+
+					<label class="xpro-theme-builder-sidebar-choice">
+						<input
+							type="radio"
+							name="xpro_theme_builder_sidebar_mode"
+							value="custom"
+							<?php checked( $sidebar_mode, 'custom' ); ?>
+						>
+
+						<?php esc_html_e( 'Custom Sidebar', 'xpro-theme-builder' ); ?>
+					</label>
+					<p class="description">
+						<?php
+						esc_html_e(
+							'Custom Sidebar: Design with Elementor and automatically display it on the selected side (Left or Right) via Xpro Settings > Sidebar Layout. Compatible with Xpro Themes.',
+							'xpro-theme-builder'
+						);
+						?>
+					</p>
 				</td>
 			</tr>
 			<?php $this->display_rules_tab(); ?>
@@ -456,50 +511,149 @@ class Xpro_Theme_Builder_Admin {
 	}
 
 	/**
-	 * Save meta field.
+	 * Save Xpro Theme Builder template metadata.
 	 *
-	 * @param POST $post_id Currennt post object which is being displayed.
+	 * @param int $post_id Template post ID.
 	 *
-	 * @return Void
+	 * @return void
 	 */
 	public function xpro_theme_builder_save_meta( $post_id ) {
 
-		// Bail if we're doing an auto save.
+		// Do not save during an autosave.
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return;
 		}
 
-		// if our nonce isn't there, or we can't verify it, bail.
-		if ( ! isset( $_POST['xpro_theme_builder_meta_nounce'] ) || ! wp_verify_nonce( $_POST['xpro_theme_builder_meta_nounce'], 'xpro_theme_builder_meta_nounce' ) ) {
+		// Verify the nonce.
+		if (
+			! isset( $_POST['xpro_theme_builder_meta_nounce'] ) ||
+			! wp_verify_nonce(
+				sanitize_text_field(
+					wp_unslash( $_POST['xpro_theme_builder_meta_nounce'] )
+				),
+				'xpro_theme_builder_meta_nounce'
+			)
+		) {
 			return;
 		}
 
-		// if our current user can't edit this post, bail.
-		if ( ! current_user_can( 'edit_posts' ) ) {
+		// Verify the user's permissions for this template.
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
 			return;
 		}
 
-		$target_locations = Xpro_Target_Rules_Fields::get_format_rule_value( $_POST, 'xpro-theme-builder-target-rules-location' );
-		$target_exclusion = Xpro_Target_Rules_Fields::get_format_rule_value( $_POST, 'xpro-theme-builder-target-rules-exclusion' );
-		$target_users     = array();
+		// Get the selected template type.
+		$posted_type = isset( $_POST['xpro_theme_builder_template_type'] )
+			? sanitize_text_field(
+				wp_unslash( $_POST['xpro_theme_builder_template_type'] )
+			)
+			: '';
 
-		if ( isset( $_POST['xpro-theme-builder-target-rules-users'] ) ) {
-			$target_users = array_map( 'sanitize_text_field', $_POST['xpro-theme-builder-target-rules-users'] );
-		}
-
-		update_post_meta( $post_id, 'xpro_theme_builder_target_include_locations', $target_locations );
-		update_post_meta( $post_id, 'xpro_theme_builder_target_exclude_locations', $target_exclusion );
-		update_post_meta( $post_id, 'xpro_theme_builder_target_user_roles', $target_users );
-
+		// Save the template type before applying sidebar settings.
 		if ( isset( $_POST['xpro_theme_builder_template_type'] ) ) {
-			update_post_meta( $post_id, 'xpro_theme_builder_template_type', sanitize_text_field( $_POST['xpro_theme_builder_template_type'] ) );
+			update_post_meta(
+				$post_id,
+				'xpro_theme_builder_template_type',
+				$posted_type
+			);
 		}
 
+		/*
+		* Sidebar templates do not use normal display conditions.
+		* Other template types retain the existing target-rule behavior.
+		*/
+		if ( 'type_sidebar' !== $posted_type ) {
+
+			$target_locations = Xpro_Target_Rules_Fields::get_format_rule_value(
+				$_POST,
+				'xpro-theme-builder-target-rules-location'
+			);
+
+			$target_exclusion = Xpro_Target_Rules_Fields::get_format_rule_value(
+				$_POST,
+				'xpro-theme-builder-target-rules-exclusion'
+			);
+
+			$target_users = array();
+
+			if ( isset( $_POST['xpro-theme-builder-target-rules-users'] ) ) {
+
+				$posted_users = wp_unslash(
+					$_POST['xpro-theme-builder-target-rules-users']
+				);
+
+				if ( is_array( $posted_users ) ) {
+					$target_users = array_map(
+						'sanitize_text_field',
+						$posted_users
+					);
+				}
+			}
+
+			update_post_meta(
+				$post_id,
+				'xpro_theme_builder_target_include_locations',
+				$target_locations
+			);
+
+			update_post_meta(
+				$post_id,
+				'xpro_theme_builder_target_exclude_locations',
+				$target_exclusion
+			);
+
+			update_post_meta(
+				$post_id,
+				'xpro_theme_builder_target_user_roles',
+				$target_users
+			);
+
+		} else {
+
+			/*
+			* Save the Sidebar mode.
+			*
+			* default = Default Sidebar (WordPress)
+			* custom  = Custom Sidebar
+			*/
+			if ( isset( $_POST['xpro_theme_builder_sidebar_mode'] ) ) {
+
+				$sidebar_mode = sanitize_text_field(
+					wp_unslash( $_POST['xpro_theme_builder_sidebar_mode'] )
+				);
+
+				$sidebar_mode = ( 'default' === $sidebar_mode )
+					? 'default'
+					: 'custom';
+
+				update_post_meta(
+					$post_id,
+					'xpro_theme_builder_sidebar_mode',
+					$sidebar_mode
+				);
+
+				xpro_theme_builder_apply_sidebar_settings( $post_id, $sidebar_mode );
+			}
+		}
+
+		// Preserve the existing sticky-header setting.
 		if ( isset( $_POST['xpro_theme_builder_sticky'] ) ) {
-			update_post_meta( $post_id, 'xpro_theme_builder_sticky', sanitize_text_field( $_POST['xpro_theme_builder_sticky'] ) );
+
+			update_post_meta(
+				$post_id,
+				'xpro_theme_builder_sticky',
+				sanitize_text_field(
+					wp_unslash( $_POST['xpro_theme_builder_sticky'] )
+				)
+			);
 		}
 
-		update_post_meta( $post_id, '_elementor_template_type', 'xpro-themer' );
+		// Preserve Elementor Theme Builder integration.
+		update_post_meta(
+			$post_id,
+			'_elementor_template_type',
+			'xpro-themer'
+		);
 	}
 
 	/**

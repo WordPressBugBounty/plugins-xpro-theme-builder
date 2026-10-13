@@ -5,10 +5,10 @@
  * Description: Free Theme Builder for Elementor with 50+ widgets. Now create theme parts like header, footer, singular, archive, woocommerce stores & more.
  * Author:      Xpro
  * Author URI:  https://www.wpxpro.com
- * Version:     1.2.15
+ * Version:     1.2.16
  * Developer:   Xpro Team
  * Text Domain: xpro-theme-builder
- * Elementor tested up to: 4.2.4
+ * Elementor tested up to: 4.3.4
  * License: GPLv2
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'XPRO_THEME_BUILDER_VER', '1.2.13' );
+define( 'XPRO_THEME_BUILDER_VER', '1.2.16' );
 define( 'XPRO_THEME_BUILDER_FILE', __FILE__ );
 define( 'XPRO_THEME_BUILDER_BASE', plugin_basename( __FILE__ ) );
 define( 'XPRO_THEME_BUILDER_DIR', plugin_dir_path( XPRO_THEME_BUILDER_FILE ) );

@@ -98,12 +98,17 @@ class Xpro_Theme_Builder_Main {
 	/**
 	 * Loads the globally required files for the plugin.
 	 */
+
+
 	public function includes() {
 
 		require_once XPRO_THEME_BUILDER_DIR . 'admin/class-xpro-admin.php';
 		require_once XPRO_THEME_BUILDER_DIR . 'admin/class-xpro-rest-api.php';
 
 		require_once XPRO_THEME_BUILDER_DIR . 'inc/xpro-functions.php';
+
+		// Load Sidebar functionality.
+		require_once XPRO_THEME_BUILDER_DIR . 'inc/sidebar.php';
 
 		// Load Target rules.
 		require_once XPRO_THEME_BUILDER_DIR . 'lib/target-rule/class-xpro-target-rules-fields.php';
@@ -143,12 +148,28 @@ class Xpro_Theme_Builder_Main {
 	}
 
 	/**
-	 * Prints the Before Footer content.
+	 * Prints the Archive content.
 	 */
 	public static function get_archive_content() {
 		if ( self::$elementor_instance ) {
 			echo self::$elementor_instance->frontend->get_builder_content_for_display( xpro_theme_builder_get_archive_id() ); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
+	}
+
+	/**
+	 * Returns the Sidebar content (Custom Sidebar template).
+	 *
+	 * @param int $id Sidebar template ID.
+	 *
+	 * @return string
+	 */
+	public static function get_sidebar_content( $id ) {
+
+		if ( self::$elementor_instance && $id ) {
+			return (string) self::$elementor_instance->frontend
+				->get_builder_content_for_display( absint( $id ) );
+		}
+		return '';
 	}
 
 	/**

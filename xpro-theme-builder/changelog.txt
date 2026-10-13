@@ -1,3 +1,8 @@
+= V 1.2.16 - 13 October 2026 =
+
+-Fixed: Resolved minor issues.
+
+
 = V 1.2.15 - 08 October 2026 =
 
 -Fixed: Resolved minor issues and improved overall stability.
